@@ -8,7 +8,7 @@ import Foundation
 
 class NetworkLayer: NetworkLayerProtocol{
     
-    var session: URLSession
+    private let session: URLSession
     
     init(session: URLSession = .shared){
         self.session = session
@@ -18,10 +18,19 @@ class NetworkLayer: NetworkLayerProtocol{
         do{
             let (data, response) = try await session.data(from: url)
             
-            guard let response = response as! HTTPURLResponse?, (200...299).contains(response.statusCode) else {
+            guard let response = response as! HTTPURLResponse?  else {
                 return .failure(.invalidResponse)
-            } 
-            return .success(data)
+            }
+            switch response.statusCode {
+            case 200...299:
+                return .success(data)
+            case 300...499:
+                return .failure(.invalidStatusCode)
+            case 500...599:
+               return .failure(.serverError)
+            default:
+                return .failure(.invalidResponse)
+            }
         }catch {
             return .failure(.networkFailure)
         }

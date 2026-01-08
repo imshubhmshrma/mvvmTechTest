@@ -11,4 +11,8 @@ enum APIError: Error{
     case invalidData
     case decodingFailure
     case networkFailure
+    case serverError
+    case invalidStatusCode
 }
+ 
+  

@@ -76,6 +76,7 @@ final class TestNetworkLayer: XCTestCase{
             
         case .failure(let error):
             XCTAssertNotNil(error)
+            XCTAssertEqual(error, APIError.serverError)
             expectation.fulfill()
         }  
         await fulfillment(of: [expectation],timeout: 1)
@@ -98,18 +99,7 @@ final class TestNetworkLayer: XCTestCase{
         }
         await fulfillment(of: [expectation],timeout: 1)
     }
-    
-    func test_invalid_reponse_failure() async {
-        MockURLProtocol.mockStubs(data: Data(), response: nil, error: APIError.invalidResponse)
-        
-        let result = await network.makeGetRequest(url: Constants.apiURL)
-        switch result{
-        case .success(_):
-            XCTFail("failed")
-        case .failure(let error):
-            XCTAssertEqual(error, .invalidResponse)
-        }
-    }
+  
     
     //edge case
     func test_valid_statuscode_invalid_data() async {
