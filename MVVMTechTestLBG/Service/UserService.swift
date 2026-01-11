@@ -16,17 +16,17 @@ class UserService: UserServiceProtocol{
     }
     
     func getUsers() async -> Result<[User], APIError> {
-        let resut = await self.network.makeGetRequest(url: Constants.apiURL)
-        switch resut{
-        case .success(let data):
+        do{
+            let data = try await self.network.makeGetRequest(url: Constants.apiURL)
             do{
                 let decodedResponse = try JSONDecoder().decode(UserResponse.self, from: data)
                 return .success(decodedResponse.users)
             } catch {
                 return .failure(APIError.decodingFailure)
-            } 
-        case .failure(let error):
-            return .failure(error)
-        }
+            }
+        } catch(let error){
+            return .failure(error as! APIError)
+        } 
     }
+    
 }

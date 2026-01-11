@@ -7,5 +7,6 @@
 import Foundation
 
 protocol NetworkLayerProtocol{
-    func makeGetRequest(url: URL) async -> Result<Data,APIError>
+   // func makeGetRequest(url: URL) async -> Result<Data,APIError>
+    func makeGetRequest(url: URL) async throws -> Data
 }

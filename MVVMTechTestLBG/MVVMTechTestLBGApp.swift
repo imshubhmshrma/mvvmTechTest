@@ -11,7 +11,8 @@ import SwiftUI
 struct MVVMTechTestLBGApp: App {
     var body: some Scene {
         WindowGroup {
-            UsersListView()
+          //  UsersListView()
+            AppRootView()
         }
     }
 }

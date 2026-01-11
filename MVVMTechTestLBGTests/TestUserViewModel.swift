@@ -27,6 +27,9 @@ final class TestUserViewModel: XCTestCase{
                   ]
                 }
         """.data(using: .utf8)
+    let inValidJSON = """
+            "Invalid"    
+        """.data(using: .utf8)
     
     override func setUp() {
         super.setUp()
@@ -47,4 +50,20 @@ final class TestUserViewModel: XCTestCase{
         XCTAssertEqual(self.userVM.users.count, 1)
     }
     
+    @MainActor
+    func test_get_users_failure() async{
+        let response = HTTPURLResponse(url: Constants.apiURL, statusCode: 300, httpVersion: nil, headerFields: nil)
+        MockURLProtocol.mockStubs(data: inValidJSON, response: response, error: nil)
+        
+        await self.userVM.loadUsers()
+        XCTAssertEqual(self.userVM.users.isEmpty,true)
+    }
+    
+    
+    @MainActor
+    func test_get_users_failure_network_error() async{
+        MockURLProtocol.mockStubs(data: nil, response: nil, error: APIError.networkFailure)
+        await self.userVM.loadUsers()
+        XCTAssertEqual(self.userVM.errorMessage,APIError.networkFailure.localizedDescription)
+    } 
 }

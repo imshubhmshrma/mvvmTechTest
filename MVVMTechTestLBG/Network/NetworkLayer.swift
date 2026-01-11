@@ -14,7 +14,7 @@ class NetworkLayer: NetworkLayerProtocol{
         self.session = session
     }
     
-    func makeGetRequest(url: URL) async -> Result<Data, APIError> {
+  /*  func makeGetRequest(url: URL) async -> Result<Data, APIError> {
         do{
             let (data, response) = try await session.data(from: url)
             
@@ -34,5 +34,25 @@ class NetworkLayer: NetworkLayerProtocol{
         }catch {
             return .failure(.networkFailure)
         }
+    }
+    */
+    func makeGetRequest(url: URL) async throws -> Data{
+        do{
+            let (data,response) = try await  self.session.data(from: url)
+            guard let response = response as! HTTPURLResponse? else { throw APIError.invalidResponse }
+            switch response.statusCode {
+            case 200...299:
+                return data
+            case 300...499:
+                throw (APIError.invalidStatusCode)
+            case 500...599:
+                throw (APIError.serverError)
+            default:
+                throw (APIError.invalidResponse)
+            } 
+        }catch{
+            throw APIError.networkFailure
+        }
+       
     }
 }

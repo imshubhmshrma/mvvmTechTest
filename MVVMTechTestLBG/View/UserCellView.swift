@@ -17,10 +17,12 @@ struct UserCellView: View{
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 40, height: 40)
             } placeholder: {
-                ProgressView()
+                //ProgressView()
             }
+            .accessibilityIdentifier("UserCellView_Img_FName_N_LName_\(user.id)") 
             Text(user.firstName + " " + user.lastName)
                 .font(.title)
-        }
+                .accessibilityIdentifier("UserCellView_txt_FName_N_LName_\(user.id)")
+        } 
     }
 }

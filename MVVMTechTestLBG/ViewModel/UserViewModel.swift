@@ -14,9 +14,12 @@ class UserViewModel: ObservableObject{
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     private let service: UserService
+    private let coordinator: AppCoordinator
     
-    init(service: UserService){
+    init(service: UserService,
+         coordinator: AppCoordinator){
         self.service = service
+        self.coordinator = coordinator
     }
     
     func loadUsers() async {
@@ -33,5 +36,9 @@ class UserViewModel: ObservableObject{
             self.errorMessage = error.localizedDescription
             self.isLoading = false
         }
-    } 
+    }
+    
+    func didSelectUser(user: User){
+        coordinator.showUserDetail(user: user)
+    }
 }
