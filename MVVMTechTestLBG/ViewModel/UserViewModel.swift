@@ -7,12 +7,17 @@
 
 import SwiftUI
 import Combine
+/*
+ ViewModel = single source of truth
+ View = observer + event sender
+*/
 
+//Network->service->viewmodel->coordination->view
 
-class UserViewModel: ObservableObject{
-    @Published var users: [User] = []
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
+class UserViewModel: UserViewModelProtocol{
+    @Published private(set) var users: [User] = []
+    @Published private(set) var isLoading: Bool = false
+    @Published private(set) var errorMessage: String?
     private let service: UserService
     private let coordinator: AppCoordinator
     
@@ -26,14 +31,12 @@ class UserViewModel: ObservableObject{
         self.isLoading = true
         self.errorMessage = nil
         defer{ self.isLoading = false }
-        
-        let result = await service.getUsers()
-        switch result {
-        case .success(let users):
-            self.users = users
+        do{
+            let result = try await service.getUsers()
+            self.users = result
             self.isLoading = false
-        case .failure(let error):
-            self.errorMessage = error.localizedDescription
+        }catch(let error){
+            self.errorMessage = "\(error)"
             self.isLoading = false
         }
     }

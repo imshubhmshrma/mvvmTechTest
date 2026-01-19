@@ -7,14 +7,11 @@
 
 import XCTest
 @testable import MVVMTechTestLBG
-
+@MainActor
 final class UsersListViewUITests: XCTestCase{
     
     var app: XCUIApplication!
-    var network: NetworkLayer!
-    var session: URLSession!
-    var service: UserService!
-    var vm: UserViewModel!
+    
     
     override func setUp() {
         super.setUp()

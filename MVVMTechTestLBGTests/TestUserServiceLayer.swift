@@ -47,12 +47,11 @@ final class TestUserServiceLayer: XCTestCase{
         let response = HTTPURLResponse(url: Constants.apiURL, statusCode: 200, httpVersion: nil, headerFields: nil)
         MockURLProtocol.mockStubs(data: validJSON, response: response, error: nil)
         //Act
-        let result = await self.service.getUsers()
-        switch result{
-        case .success(let users):
+        do{
+            let result = try await self.service.getUsers()
             //Assert
-            XCTAssertNotNil(users)
-        case .failure(_):
+            XCTAssertNotNil(result)
+        } catch {
             XCTFail("failures in loading users")
         }
     }
@@ -60,30 +59,37 @@ final class TestUserServiceLayer: XCTestCase{
     
     func test_failure_invalid_json_status_code_300() async{
         //Arrange
-        let response = HTTPURLResponse(url: Constants.apiURL, statusCode: 300, httpVersion: nil, headerFields: nil)
+        let response = await HTTPURLResponse(url: Constants.apiURL, statusCode: 300, httpVersion: nil, headerFields: nil)
         MockURLProtocol.mockStubs(data: inValidJSON, response: response, error: nil)
         //Act
-        let result = await self.service.getUsers()
-        switch result{
-        case .success(_):
-            XCTFail("failures in loading users")
-        case .failure(let error):
-            XCTAssertEqual(error, APIError.invalidStatusCode)
+        do{
+           _ = try await self.service.getUsers()
+        }catch(let error){
+            XCTAssertEqual(error as? APIError, APIError.invalidStatusCode)
         }
     }
     
-    
+    @MainActor
     func test_failure_invalid_json_status_code_500() async{
         let response = HTTPURLResponse(url: Constants.apiURL, statusCode: 500, httpVersion: nil, headerFields: nil)
         MockURLProtocol.mockStubs(data: nil, response: response, error: nil)
-        
-        let result = await service.getUsers()
-        switch result{
-        case .success(_):
-            XCTFail("failures in loading users")
-        case .failure(let error):
-            XCTAssertEqual(error, APIError.serverError)
+        do{
+            _ = try await service.getUsers()
+        }catch(let error){
+            XCTAssertEqual(error as? APIError, APIError.serverError)
         }
     }
     
+    func test_no_internet() async{
+        MockURLProtocol.mockStubs(data: nil, response: nil, error: APIError.networkFailure)
+        do{
+            _ = try await service.getUsers()
+        } catch(let error as APIError) {
+            XCTAssertNotNil(error)
+            XCTAssertEqual(error, .networkFailure)
+        }catch{
+            XCTFail("Catch called test_no_internet")
+        }
+        
+    }
 }

@@ -24,7 +24,7 @@ final class AppCoordinator: ObservableObject{
         path = NavigationPath()
     }
     func showUserDetail(user: User) {
-          path.append(AppRoute.UserDetail(user: user))
-      }
-
+        path.append(AppRoute.UserDetail(user: user))
+    }
+    
 }

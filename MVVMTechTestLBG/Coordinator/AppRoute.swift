@@ -8,4 +8,5 @@
 enum AppRoute: Hashable{
     case UserList
     case UserDetail(user: User)
+    
 }

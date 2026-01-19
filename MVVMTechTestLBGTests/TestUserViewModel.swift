@@ -13,6 +13,7 @@ final class TestUserViewModel: XCTestCase{
     var session: URLSession!
     var service: UserService!
     var userVM: UserViewModel!
+    var coordinator: AppCoordinator!
     
     let validJSON = """
                 {
@@ -38,7 +39,7 @@ final class TestUserViewModel: XCTestCase{
         self.session = URLSession(configuration: config)
         self.network = NetworkLayer(session: session)
         self.service = UserService(network: network)
-        self.userVM = UserViewModel(service: service)
+        self.userVM = UserViewModel(service: service, coordinator: coordinator)
     }
     
     @MainActor

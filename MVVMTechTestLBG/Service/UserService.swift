@@ -9,24 +9,24 @@ import Foundation
 
 class UserService: UserServiceProtocol{
     
-    private var network: NetworkLayer
+    private(set) var network: NetworkLayer
     
     init(network: NetworkLayer = NetworkLayer()){
         self.network = network
     }
     
-    func getUsers() async -> Result<[User], APIError> {
+    func getUsers() async throws -> [User] {
         do{
             let data = try await self.network.makeGetRequest(url: Constants.apiURL)
             do{
                 let decodedResponse = try JSONDecoder().decode(UserResponse.self, from: data)
-                return .success(decodedResponse.users)
+                return decodedResponse.users
             } catch {
-                return .failure(APIError.decodingFailure)
+                throw APIError.decodingFailure
             }
         } catch(let error){
-            return .failure(error as! APIError)
-        } 
+            throw error
+        }
     }
     
 }

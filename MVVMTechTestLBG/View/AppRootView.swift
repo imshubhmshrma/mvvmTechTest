@@ -23,7 +23,8 @@ struct AppRootView: View{
         switch route{
         case .UserList:
             UsersListView(userVM: UserViewModel(service: UserService(), coordinator: coordinator))
-        case .UserDetail(let user):            UserDetailView(user: user)
+        case .UserDetail(let user):
+            UserDetailView(user: user)
         }
     }
 }

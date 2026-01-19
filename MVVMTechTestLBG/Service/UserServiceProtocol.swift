@@ -6,5 +6,6 @@
 //
 
 protocol UserServiceProtocol{
-    func getUsers() async -> Result<[User],APIError>
+    //func getUsers() async -> Result<[User],APIError>
+    func getUsers() async throws -> [User]
 }
